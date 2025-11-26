@@ -1,0 +1,125 @@
+const express = require("express");
+const router = express.Router();
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs");
+const config = require("../config");
+const { auth } = require("../middleware/auth");
+
+// Inscription
+router.post("/register", async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    // Validation
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: "Tous les champs sont requis" });
+    }
+
+    // Vérifier si l'utilisateur existe
+    const existingUser = await User.findOne({ 
+      $or: [{ email }, { username }] 
+    });
+    if (existingUser) {
+      return res.status(400).json({ error: "Utilisateur déjà existant" });
+    }
+
+    const user = await User.create({ username, email, password });
+    
+    // Générer token
+    const token = jwt.sign(
+      { id: user._id, role: user.role }, 
+      config.jwtSecret,
+      { expiresIn: "7d" }
+    );
+
+    res.status(201).json({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        subscription: user.subscription
+      }
+    });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Connexion
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email et mot de passe requis" });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: "Identifiants invalides" });
+    }
+
+    const isValid = await bcrypt.compare(password, user.password);
+    if (!isValid) {
+      return res.status(401).json({ error: "Identifiants invalides" });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role }, 
+      config.jwtSecret,
+      { expiresIn: "7d" }
+    );
+
+    res.json({
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+        subscription: user.subscription
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Erreur serveur" });
+  }
+});
+
+// Profil utilisateur (protégé)
+router.get("/profile", auth, async (req, res) => {
+  res.json({
+    user: {
+      id: req.user._id,
+      username: req.user.username,
+      email: req.user.email,
+      role: req.user.role,
+      subscription: req.user.subscription,
+      createdAt: req.user.createdAt
+    }
+  });
+});
+
+// Mettre à jour l'abonnement
+router.put("/subscription", auth, async (req, res) => {
+  try {
+    const { subscription } = req.body;
+    if (!["free", "premium"].includes(subscription)) {
+      return res.status(400).json({ error: "Type d'abonnement invalide" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { subscription },
+      { new: true }
+    ).select("-password");
+
+    res.json({ user });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+module.exports = router;
