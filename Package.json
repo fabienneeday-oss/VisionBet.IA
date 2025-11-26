@@ -1,0 +1,31 @@
+{
+  "name": "visionbet-ia",
+  "version": "1.0.0",
+  "description": "Plateforme de prédictions football IA - VisionBet.IA",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "nodemon backend/server.js",
+    "build": "echo 'Build completed'"
+  },
+  "keywords": ["football", "predictions", "ai", "betting", "sports"],
+  "author": "VisionBet Team",
+  "license": "proprietary",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^7.5.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "cors": "^2.8.5",
+    "axios": "^1.5.0",
+    "stripe": "^13.3.0",
+    "dotenv": "^16.3.1",
+    "express-rate-limit": "^6.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
