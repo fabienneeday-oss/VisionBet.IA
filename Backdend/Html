@@ -1,10 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <title>VisionBet.IA</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionBet.IA - Plateforme de Pronostics</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>🚀 VisionBet.IA - En construction</h1>
-    <p>Notre application arrive bientôt !</p>
+    <header>
+        <h1>🎯 VisionBet.IA</h1>
+        <p>Plateforme de pronostics intelligents</p>
+    </header>
+    
+    <main>
+        <section>
+            <h2>🚀 Notre application arrive bientôt</h2>
+            <p>Nous travaillons sur une plateforme révolutionnaire de prédictions football.</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 VisionBet.IA - Tous droits réservés</p>
+    </footer>
+
+    <script src="app.js"></script>
 </body>
 </html>
